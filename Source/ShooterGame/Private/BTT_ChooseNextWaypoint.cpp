@@ -3,7 +3,6 @@
 #include "BTT_ChooseNextWaypoint.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "SG_PatrollingGuard.h"
 #include "PatrolComponent.h"
 
 void UBTT_ChooseNextWaypoint::SetOwner(AActor* InActorOwner)
@@ -15,7 +14,7 @@ void UBTT_ChooseNextWaypoint::SetOwner(AActor* InActorOwner)
 
 EBTNodeResult::Type UBTT_ChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AAIController* AIC = Cast<AAIController>(OwnerComp.GetOwner());
+	auto AIC = OwnerComp.GetAIOwner();
 	if (!ensure(AIC)) { return EBTNodeResult::Failed;  }
 	APawn* ControlledPawn = AIC->GetPawn();
 	if (!ensure(ControlledPawn)) { return EBTNodeResult::Failed; }
