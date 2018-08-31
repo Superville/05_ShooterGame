@@ -6,16 +6,6 @@
 // Sets default values
 AThirdPersonCharacter::AThirdPersonCharacter()
 {
-	// Create a gun mesh component
-	Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun"));
-	Gun->bCastDynamicShadow = false;
-	Gun->CastShadow = false;
-	Gun->SetupAttachment(GetMesh());
-
-	MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
-	MuzzleLocation->SetupAttachment(Gun);
-	MuzzleLocation->SetRelativeLocation(FVector(0.2f, 48.4f, -10.6f));
-
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(100.0f, 0.0f, 10.0f);
 
@@ -29,7 +19,7 @@ void AThirdPersonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+//	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 }
 
 // Called every frame

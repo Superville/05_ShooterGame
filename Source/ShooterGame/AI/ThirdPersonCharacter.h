@@ -11,14 +11,6 @@ class SHOOTERGAME_API AThirdPersonCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Gun mesh */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	class USkeletalMeshComponent* Gun;
-
-	/** Location on gun mesh where projectiles should spawn. */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	class USceneComponent* MuzzleLocation;
-
 public:
 	// Sets default values for this character's properties
 	AThirdPersonCharacter();
