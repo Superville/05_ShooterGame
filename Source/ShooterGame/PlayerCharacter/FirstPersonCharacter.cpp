@@ -59,7 +59,6 @@ void AFirstPersonCharacter::SpawnWeapon()
 	Weapon = GetWorld()->SpawnActor<AShooterWeapon>(WeaponClass, Mesh1P->GetSocketLocation("GripPoint"), Mesh1P->GetSocketRotation("GripPoint"));
 	if (Weapon != nullptr)
 	{
-		Weapon->Character = this;
 		Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 		Weapon->AnimInstance = Mesh1P->GetAnimInstance();
 	}

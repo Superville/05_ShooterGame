@@ -45,16 +45,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	class UAnimMontage* FireAnimation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
 	class UAnimInstance* AnimInstance;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
-	class AFirstPersonCharacter* Character;
-
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
 	/** Fires a projectile */
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void OnFire();
 };

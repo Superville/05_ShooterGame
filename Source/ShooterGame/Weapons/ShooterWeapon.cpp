@@ -44,17 +44,17 @@ void AShooterWeapon::Tick(float DeltaTime)
 
 void AShooterWeapon::OnFire()
 {
-	if (!ensure(Character)) { return; }
+	APawn* P = Cast<APawn>(GetParentActor());
 
 	// try and fire a projectile
-	if (ProjectileClass != NULL)
+	if (ProjectileClass != NULL && P != nullptr)
 	{
 		UWorld* const World = GetWorld();
 		if (World != NULL)
 		{
-			const FRotator SpawnRotation = Character->GetControlRotation();
+			const FRotator SpawnRotation = P->GetControlRotation();
 			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : Character->GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
+			const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : P->GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
 
 			//Set Spawn Collision Handling Override
 			FActorSpawnParameters ActorSpawnParams;
