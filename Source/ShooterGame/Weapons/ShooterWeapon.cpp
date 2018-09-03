@@ -44,7 +44,7 @@ void AShooterWeapon::Tick(float DeltaTime)
 
 void AShooterWeapon::OnFire()
 {
-	APawn* P = Cast<APawn>(GetParentActor());
+	APawn* P = Cast<APawn>(GetRootComponent()->GetAttachmentRootActor());
 
 	// try and fire a projectile
 	if (ProjectileClass != NULL && P != nullptr)
