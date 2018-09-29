@@ -18,8 +18,7 @@ AShooterWeapon::AShooterWeapon()
 	FP_Gun->SetOnlyOwnerSee(true);			// only the owning player will see this mesh
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
-	// FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
-	FP_Gun->SetupAttachment(RootComponent);
+	SetRootComponent(FP_Gun);
 
 	FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
 	FP_MuzzleLocation->SetupAttachment(FP_Gun);
@@ -95,11 +94,10 @@ void AShooterWeapon::OnFire()
 		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 	}
 
-	AThirdPersonCharacter* TPC = Cast<AThirdPersonCharacter>(GetAttachParentActor());
 	// try and play a firing animation if specified
-	if (FireAnimation != NULL && TPC != nullptr && TPC->Mesh1P != nullptr && TPC->Mesh1P->GetAnimInstance() != NULL)
+	if (FireAnimation != nullptr && AnimInstance != nullptr)
 	{
-		TPC->Mesh1P->GetAnimInstance()->Montage_Play(FireAnimation, 1.f);
+		AnimInstance->Montage_Play(FireAnimation, 1.f);
 	}
 
 	if (FireRate > 0.f)

@@ -4,6 +4,7 @@
 #include "Runtime/Engine/Classes/Camera/CameraComponent.h"
 #include "Runtime/Engine/Classes/Components/ChildActorComponent.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
+#include "Weapons/ShooterWeapon.h"
 
 
 // Sets default values
@@ -23,17 +24,32 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh1P"));
 	Mesh1P->SetupAttachment(Camera1P);
-
-	Gun1P = CreateDefaultSubobject<UChildActorComponent>(TEXT("Gun1P"));
-	Gun1P->SetupAttachment(Mesh1P, TEXT("GripPoint"));
+	Mesh1P->SetOnlyOwnerSee(true);
+	Mesh1P->bCastDynamicShadow = false;
+	Mesh1P->CastShadow = false;
+	Mesh1P->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
+	Mesh1P->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
 }
 
 // Called when the game starts or when spawned
 void AThirdPersonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-//	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+
+	SpawnWeapon();
+}
+
+
+void AThirdPersonCharacter::SpawnWeapon()
+{
+	if (!ensure(WeaponClass)) { return; }
+
+	Weapon = GetWorld()->SpawnActor<AShooterWeapon>(WeaponClass, Mesh1P->GetSocketLocation("GripPoint"), Mesh1P->GetSocketRotation("GripPoint"));
+	if (Weapon != nullptr)
+	{
+		Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+		Weapon->AnimInstance = Mesh1P->GetAnimInstance();
+	}
 }
 
 // Called every frame
