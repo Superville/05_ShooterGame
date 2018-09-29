@@ -5,6 +5,10 @@
 #include "Animation/AnimInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCharacter/FirstPersonCharacter.h"
+#include "AI/ThirdPersonCharacter.h"
+#include "Perception/PawnSensingComponent.h"
+#include "Runtime/Engine/Classes/Components/PawnNoiseEmitterComponent.h"
+#include "Runtime/AIModule/Classes/Perception/AISense_Hearing.h"
 
 // Sets default values
 AShooterWeapon::AShooterWeapon()
@@ -40,11 +44,31 @@ void AShooterWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (CanFire())
+	{
+		OnFire();
+	}
+}
+
+bool AShooterWeapon::CanFire()
+{
+	auto APA = GetAttachParentActor();
+	if (APA != nullptr)
+	{
+		auto TPC = Cast<AThirdPersonCharacter>(APA);
+		if (TPC != nullptr)
+		{
+			return (TPC->bTriggerDown && NextFireTime <= GetWorld()->GetTimeSeconds());
+		}
+	}
+
+	return false;
 }
 
 void AShooterWeapon::OnFire()
 {
-	APawn* P = Cast<APawn>(GetRootComponent()->GetAttachmentRootActor());
+	//APawn* P = Cast<APawn>(GetRootComponent()->GetAttachmentRootActor());
+	APawn* P = Cast<APawn>(GetAttachParentActor());
 
 	// try and fire a projectile
 	if (ProjectileClass != NULL && P != nullptr)
@@ -76,4 +100,11 @@ void AShooterWeapon::OnFire()
 	{
 		AnimInstance->Montage_Play(FireAnimation, 1.f);
 	}
+
+	if (FireRate > 0.f)
+	{
+		NextFireTime = GetWorld()->GetTimeSeconds() + 1.f / FireRate;
+	}
+
+	UAISense_Hearing::ReportNoiseEvent(this, GetActorLocation(), 1.f, P);
 }

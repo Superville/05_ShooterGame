@@ -11,14 +11,6 @@ class SHOOTERGAME_API AShooterWeapon : public AActor
 {
 	GENERATED_BODY()
 
-	/** Gun mesh: 1st person view (seen only by self) */
-	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
-	class USkeletalMeshComponent* FP_Gun;
-
-	/** Location on gun mesh where projectiles should spawn. */
-	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
-	class USceneComponent* FP_MuzzleLocation;
-
 public:	
 	// Sets default values for this actor's properties
 	AShooterWeapon();
@@ -28,6 +20,15 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+
+	/** Gun mesh: 1st person view (seen only by self) */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
+	class USkeletalMeshComponent* FP_Gun;
+
+	/** Location on gun mesh where projectiles should spawn. */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
+	class USceneComponent* FP_MuzzleLocation;
+
 	/** Gun muzzle's offset from the characters location */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	FVector GunOffset;
@@ -50,6 +51,14 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float NextFireTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float FireRate;
+
+	UFUNCTION(Category = "Gameplay")
+	bool CanFire();
 	
 	/** Fires a projectile */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")

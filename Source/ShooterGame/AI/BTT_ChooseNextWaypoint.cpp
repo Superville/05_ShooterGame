@@ -29,14 +29,17 @@ EBTNodeResult::Type UBTT_ChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent&
 
 	auto BlackBoardComp = OwnerComp.GetBlackboardComponent();
 	auto Index = BlackBoardComp->GetValueAsInt(IndexSelector.SelectedKeyName);
-	int NextIndex = (Index + 1) % PatrolRoute.Num();
-
-	if (PatrolRoute.IsValidIndex(Index))
+	if (PatrolRoute.Num() > 0)
 	{
-		BlackBoardComp->SetValueAsObject(WaypointSelector.SelectedKeyName, PatrolRoute[Index]);
-	}
+		int NextIndex = (Index + 1) % PatrolRoute.Num();
 
-	BlackBoardComp->SetValueAsInt(IndexSelector.SelectedKeyName, NextIndex);
+		if (PatrolRoute.IsValidIndex(Index))
+		{
+			BlackBoardComp->SetValueAsObject(WaypointSelector.SelectedKeyName, PatrolRoute[Index]);
+		}
+
+		BlackBoardComp->SetValueAsInt(IndexSelector.SelectedKeyName, NextIndex);
+	}
 
 	
 
