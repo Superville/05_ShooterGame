@@ -95,10 +95,11 @@ void AShooterWeapon::OnFire()
 		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 	}
 
+	AThirdPersonCharacter* TPC = Cast<AThirdPersonCharacter>(GetAttachParentActor());
 	// try and play a firing animation if specified
-	if (FireAnimation != NULL && AnimInstance != NULL)
+	if (FireAnimation != NULL && TPC != nullptr && TPC->Mesh1P != nullptr && TPC->Mesh1P->GetAnimInstance() != NULL)
 	{
-		AnimInstance->Montage_Play(FireAnimation, 1.f);
+		TPC->Mesh1P->GetAnimInstance()->Montage_Play(FireAnimation, 1.f);
 	}
 
 	if (FireRate > 0.f)

@@ -26,11 +26,10 @@ EBTNodeResult::Type UBTT_ChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent&
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Patrol Route is empty on %s"), *ControlledPawn->GetName());
 	}
-
-	auto BlackBoardComp = OwnerComp.GetBlackboardComponent();
-	auto Index = BlackBoardComp->GetValueAsInt(IndexSelector.SelectedKeyName);
-	if (PatrolRoute.Num() > 0)
+	else
 	{
+		auto BlackBoardComp = OwnerComp.GetBlackboardComponent();
+		auto Index = BlackBoardComp->GetValueAsInt(IndexSelector.SelectedKeyName);
 		int NextIndex = (Index + 1) % PatrolRoute.Num();
 
 		if (PatrolRoute.IsValidIndex(Index))
@@ -40,7 +39,6 @@ EBTNodeResult::Type UBTT_ChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent&
 
 		BlackBoardComp->SetValueAsInt(IndexSelector.SelectedKeyName, NextIndex);
 	}
-
 	
 
 	return EBTNodeResult::Succeeded;
