@@ -43,10 +43,6 @@ void AShooterWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CanFire())
-	{
-		OnFire();
-	}
 }
 
 bool AShooterWeapon::CanFire()
@@ -57,7 +53,7 @@ bool AShooterWeapon::CanFire()
 		auto TPC = Cast<AThirdPersonCharacter>(APA);
 		if (TPC != nullptr)
 		{
-			return (TPC->bTriggerDown && NextFireTime <= GetWorld()->GetTimeSeconds());
+			return !TPC->IsDead() && (NextFireTime <= GetWorld()->GetTimeSeconds());
 		}
 	}
 
@@ -66,6 +62,11 @@ bool AShooterWeapon::CanFire()
 
 void AShooterWeapon::OnFire()
 {
+	if (!CanFire())
+	{
+		return;
+	}
+
 	//APawn* P = Cast<APawn>(GetRootComponent()->GetAttachmentRootActor());
 	APawn* P = Cast<APawn>(GetAttachParentActor());
 

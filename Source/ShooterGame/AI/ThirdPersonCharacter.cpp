@@ -37,6 +37,11 @@ void AThirdPersonCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	SpawnWeapon();
+
+	if (InputComponent != nullptr)
+	{
+		InputComponent->BindAction("Fire", IE_Pressed, this, &AThirdPersonCharacter::PullTrigger);
+	}
 }
 
 
@@ -64,5 +69,14 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+
+void AThirdPersonCharacter::PullTrigger()
+{
+	if (Weapon != nullptr)
+	{
+		Weapon->OnFire();
+	}
 }
 

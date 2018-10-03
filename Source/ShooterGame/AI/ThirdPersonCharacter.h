@@ -40,6 +40,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	bool bTriggerDown;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float RemainingHealth = 100;
+
+	UFUNCTION(BlueprintPure, Category = "Gameplay")
+	bool IsDead() { return RemainingHealth <= 0.f; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,6 +57,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void PullTrigger();
 	
 };
