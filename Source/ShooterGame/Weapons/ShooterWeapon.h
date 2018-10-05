@@ -41,18 +41,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	class USoundBase* FireSound;
 
-
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	class UAnimMontage* FireAnimationFP;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
-	class UAnimInstance* AnimInstanceFP;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	class UAnimMontage* FireAnimationTP;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
+	UPROPERTY()
+	class UAnimInstance* AnimInstanceFP;
+	UPROPERTY()
 	class UAnimInstance* AnimInstanceTP;
 
 	// Called every frame

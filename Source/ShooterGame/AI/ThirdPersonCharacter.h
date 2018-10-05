@@ -46,6 +46,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Gameplay")
 	bool IsDead() { return RemainingHealth <= 0.f; }
 
+	virtual void UnPossessed() override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

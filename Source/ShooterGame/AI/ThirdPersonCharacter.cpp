@@ -52,14 +52,26 @@ void AThirdPersonCharacter::SpawnWeapon()
 	Weapon = GetWorld()->SpawnActor<AShooterWeapon>(WeaponClass, Mesh1P->GetSocketLocation("GripPoint"), Mesh1P->GetSocketRotation("GripPoint"));
 	if (Weapon != nullptr)
 	{
-		Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+		if (IsPlayerControlled())
+		{
+			Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+		}
+		else
+		{
+			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+		}
 		Weapon->AnimInstanceFP = Mesh1P->GetAnimInstance();
 		Weapon->AnimInstanceTP = GetMesh()->GetAnimInstance();
+	}
+}
 
-		if (!IsPlayerControlled())
-		{
-			Weapon->SetActorHiddenInGame(true);
-		}
+void AThirdPersonCharacter::UnPossessed()
+{
+	Super::UnPossessed();
+
+	if (Weapon != nullptr)
+	{
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 	}
 }
 
