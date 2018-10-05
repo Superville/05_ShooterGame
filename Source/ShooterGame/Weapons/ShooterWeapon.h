@@ -44,10 +44,16 @@ public:
 
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
-	class UAnimMontage* FireAnimation;
+	class UAnimMontage* FireAnimationFP;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
-	class UAnimInstance* AnimInstance;
+	class UAnimInstance* AnimInstanceFP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	class UAnimMontage* FireAnimationTP;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
+	class UAnimInstance* AnimInstanceTP;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

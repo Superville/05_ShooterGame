@@ -60,7 +60,7 @@ void AFirstPersonCharacter::SpawnWeapon()
 	if (Weapon != nullptr)
 	{
 		Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-		Weapon->AnimInstance = Mesh1P->GetAnimInstance();
+		Weapon->AnimInstanceFP = Mesh1P->GetAnimInstance();
 	}
 }
 

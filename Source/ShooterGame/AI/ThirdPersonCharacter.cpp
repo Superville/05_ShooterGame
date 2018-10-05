@@ -53,7 +53,13 @@ void AThirdPersonCharacter::SpawnWeapon()
 	if (Weapon != nullptr)
 	{
 		Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-		Weapon->AnimInstance = Mesh1P->GetAnimInstance();
+		Weapon->AnimInstanceFP = Mesh1P->GetAnimInstance();
+		Weapon->AnimInstanceTP = GetMesh()->GetAnimInstance();
+
+		if (!IsPlayerControlled())
+		{
+			Weapon->SetActorHiddenInGame(true);
+		}
 	}
 }
 
