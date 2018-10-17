@@ -25,5 +25,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	void SpawnActorsWithinTile(FVector MinPosition, FVector MaxPosition, TArray<TSubclassOf<AActor>> ToSpawn, int MinSpawn, int MaxSpawn);
-		
+
+private:
+	bool CanSpawnAt(FVector Location, float Radius);
+	bool FindEmptyLocation(FVector& out_EmptyLocation, float Radius, FVector MinPosition, FVector MaxPosition);
+	void PlaceActor(TSubclassOf<AActor> ToSpawn, FVector SpawnPoint);
 };
