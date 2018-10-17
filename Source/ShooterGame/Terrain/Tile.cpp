@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tile.h"
+#include "ActorPool.h"
+#include "InfiniteTerrainGameMode.h"
 #include "DrawDebugHelpers.h"
 
 #define ECC_Spawn ECC_GameTraceChannel2 
@@ -17,6 +19,47 @@ ATile::ATile()
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	//test
+	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::EndPlay"), *GetName());
+
+	if (NavMeshBoundsRef != nullptr)
+	{
+		//test
+		UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::EndPlay - Return Actor"), *GetName(), *NavMeshBoundsRef->GetName());
+
+		NavMeshBoundsVolumePool->ReturnActor(NavMeshBoundsRef);
+	}
+}
+
+void ATile::SetActorPool(class UActorPool* Pool)
+{
+	NavMeshBoundsVolumePool = Pool;
+
+	//test
+	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::SetActorPool - %s"), *GetName(), *NavMeshBoundsVolumePool->GetName());
+
+	PositionNavMeshBoundsVolume();
+}
+
+void ATile::PositionNavMeshBoundsVolume()
+{
+	NavMeshBoundsRef = NavMeshBoundsVolumePool->CheckoutActor();
+	if (NavMeshBoundsRef == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[%s] ATile::PositionNavMeshBoundsVolume - Not enough actors in pool."), *GetName());
+		return;
+	}
+
+	//test
+	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::PositionNavMeshBoundsVolume - checked out: %s"), *GetName(), *NavMeshBoundsRef->GetName());
+
+	NavMeshBoundsRef->SetActorLocation(GetActorLocation());
 }
 
 void ATile::SpawnActorsWithinTile(FVector MinPosition, FVector MaxPosition, TArray<TSubclassOf<AActor>> ToSpawn, int MinSpawn, int MaxSpawn)

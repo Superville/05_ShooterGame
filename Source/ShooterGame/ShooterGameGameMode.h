@@ -13,6 +13,11 @@ class AShooterGameGameMode : public AGameModeBase
 
 public:
 	AShooterGameGameMode();
+
+
+	class UActorPool* ActorPool;
+
+	
 };
 
 
