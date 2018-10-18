@@ -6,6 +6,21 @@
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSpawnParams
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Location;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Rotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Scale;
+
+	FString ToString() { return FString::Printf(TEXT("Location: %s Rotation: %f Scale: %f"), *Location.ToString(), Rotation, Scale); }
+};
+
 UCLASS()
 class SHOOTERGAME_API ATile : public AActor
 {
@@ -19,7 +34,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	void SpawnActorsWithinTile(FVector MinPosition, FVector MaxPosition, TArray<TSubclassOf<AActor>> ToSpawn, int MinSpawn, int MaxSpawn);
+	void SpawnActorsWithinTile(FVector MinPosition, FVector MaxPosition, TArray<TSubclassOf<class APropBase>> ToSpawn, int MinSpawn, int MaxSpawn);
 
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetActorPool(class UActorPool* Pool);
@@ -37,7 +52,7 @@ protected:
 private:
 	bool CanSpawnAt(FVector Location, float Radius);
 	bool FindEmptyLocation(FVector& out_EmptyLocation, float Radius, FVector MinPosition, FVector MaxPosition);
-	void PlaceActor(TSubclassOf<AActor> ToSpawn, FVector SpawnPoint);
+	void PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnParams& SpawnParams);
 	void PositionNavMeshBoundsVolume();
 
 	UPROPERTY()

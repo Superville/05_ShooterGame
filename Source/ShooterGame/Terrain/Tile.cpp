@@ -3,6 +3,7 @@
 #include "Tile.h"
 #include "ActorPool.h"
 #include "InfiniteTerrainGameMode.h"
+#include "PropBase.h"
 #include "AI/Navigation/NavigationSystem.h"
 #include "DrawDebugHelpers.h"
 
@@ -27,13 +28,11 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	//test
-	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::EndPlay"), *GetName());
+//	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::EndPlay"), *GetName());
 
 	if (NavMeshBoundsRef != nullptr)
 	{
-		//test
-		UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::EndPlay - Return Actor"), *GetName(), *NavMeshBoundsRef->GetName());
+//		UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::EndPlay - Return Actor"), *GetName(), *NavMeshBoundsRef->GetName());
 
 		NavMeshBoundsVolumePool->ReturnActor(NavMeshBoundsRef);
 	}
@@ -43,8 +42,7 @@ void ATile::SetActorPool(class UActorPool* Pool)
 {
 	NavMeshBoundsVolumePool = Pool;
 
-	//test
-	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::SetActorPool - %s"), *GetName(), *NavMeshBoundsVolumePool->GetName());
+//	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::SetActorPool - %s"), *GetName(), *NavMeshBoundsVolumePool->GetName());
 
 	PositionNavMeshBoundsVolume();
 }
@@ -58,37 +56,51 @@ void ATile::PositionNavMeshBoundsVolume()
 		return;
 	}
 
-	//test
-	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::PositionNavMeshBoundsVolume - checked out: %s"), *GetName(), *NavMeshBoundsRef->GetName());
+//	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::PositionNavMeshBoundsVolume - checked out: %s"), *GetName(), *NavMeshBoundsRef->GetName());
 
 	NavMeshBoundsRef->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
 	GetWorld()->GetNavigationSystem()->Build();
 }
 
-void ATile::SpawnActorsWithinTile(FVector MinPosition, FVector MaxPosition, TArray<TSubclassOf<AActor>> ToSpawn, int MinSpawn, int MaxSpawn)
+void ATile::SpawnActorsWithinTile(FVector MinPosition, FVector MaxPosition, TArray<TSubclassOf<APropBase>> ToSpawn, int MinSpawn, int MaxSpawn)
 {
 	if (ToSpawn.Num() <= 0)
 		return;
 
 	auto NumSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
-	FVector SpawnPoint;
+	FSpawnParams SpawnParams;
 	for (int i = 0; i < NumSpawn; i++)
 	{
 		int SpawnIdx = FMath::RandRange(0,ToSpawn.Num()-1);
-		if (FindEmptyLocation(SpawnPoint, 350.f, MinPosition, MaxPosition))
+		auto SpawnProp = ToSpawn[SpawnIdx];
+		
+		auto DefaultObj = Cast<APropBase>(SpawnProp->GetDefaultObject());
+		SpawnParams.Rotation = FMath::RandRange(-180, 180);
+		SpawnParams.Scale = FMath::RandRange(DefaultObj->MinScale, DefaultObj->MaxScale);
+
+		float BoundsCheckSize = DefaultObj->BoundsCheckSize * SpawnParams.Scale;
+		if (FindEmptyLocation(SpawnParams.Location, BoundsCheckSize, MinPosition, MaxPosition))
 		{
-			PlaceActor(ToSpawn[SpawnIdx], SpawnPoint);
+			//UE_LOG(LogTemp, Warning, TEXT("[%s] SpawnActorsWithinTile - %s %s"), *GetName(), *SpawnProp->GetName(), *SpawnParams.ToString());
+
+			PlaceActor(SpawnProp, SpawnParams);
 		}
 	}
 }
 
-void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FVector SpawnPoint)
+void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnParams& SpawnParams)
 {
 	FActorSpawnParameters ActorSpawnParams;
 	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnPoint, FRotator(0, FMath::RandRange(-180.f, 180.f), 0), ActorSpawnParams);
+	FTransform SpawnTranform;
+	SpawnTranform.SetLocation(SpawnParams.Location);
+	SpawnTranform.SetRotation(FRotator(0, SpawnParams.Rotation, 0).Quaternion());
+	SpawnTranform.SetScale3D(FVector(SpawnParams.Scale));
+
+	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnTranform, ActorSpawnParams);
 	SpawnedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+	SpawnedActor->SetActorScale3D(FVector(SpawnParams.Scale));
 }
 
 #define MAX_ATTEMPTS 100
@@ -112,7 +124,6 @@ bool ATile::CanSpawnAt(FVector Location, float Radius)
 	FHitResult HitResult;
 	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, Location, Location, FQuat::Identity, ECC_Spawn, FCollisionShape::MakeSphere(Radius));
 
-	//test
 	//DrawDebugSphere(GetWorld(), Location, Radius, 32, bHit ? FColor::Red : FColor::Green, true);
 	return !bHit;
 }

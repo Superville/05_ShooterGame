@@ -18,15 +18,13 @@ void UActorPool::Add(AActor* ActorToAdd)
 
 	AvailableActors.Push(ActorToAdd);
 
-	//test
-	UE_LOG(LogTemp, Warning, TEXT("[%s] UActorPool::Add - %s / %d"), *GetName(), *ActorToAdd->GetName(), AvailableActors.Num());
+//	UE_LOG(LogTemp, Warning, TEXT("[%s] UActorPool::Add - %s / %d"), *GetName(), *ActorToAdd->GetName(), AvailableActors.Num());
 }
 
 AActor* UActorPool::CheckoutActor()
 {
 	if (AvailableActors.Num() == 0)
 	{
-		//test
 		UE_LOG(LogTemp, Error, TEXT("[%s] UActorPool::CheckoutActor - NONE AVAILABLE"), *GetName());
 		return nullptr;
 	}
@@ -35,8 +33,7 @@ AActor* UActorPool::CheckoutActor()
 
 void UActorPool::ReturnActor(AActor* ActorToReturn)
 {
-	//test
-	UE_LOG(LogTemp, Warning, TEXT("[%s] UActorPool::ReturnActor"), *GetName());
+//	UE_LOG(LogTemp, Warning, TEXT("[%s] UActorPool::ReturnActor"), *GetName());
 
 	Add(ActorToReturn);
 }
