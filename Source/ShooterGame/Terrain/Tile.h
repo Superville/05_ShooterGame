@@ -10,18 +10,11 @@ UCLASS()
 class SHOOTERGAME_API ATile : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:	
 	// Sets default values for this actor's properties
 	ATile();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -30,6 +23,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetActorPool(class UActorPool* Pool);
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Navigation")
+	FVector NavigationBoundsOffset;
+
 	
 private:
 	bool CanSpawnAt(FVector Location, float Radius);

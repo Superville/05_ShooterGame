@@ -3,6 +3,7 @@
 #include "Tile.h"
 #include "ActorPool.h"
 #include "InfiniteTerrainGameMode.h"
+#include "AI/Navigation/NavigationSystem.h"
 #include "DrawDebugHelpers.h"
 
 #define ECC_Spawn ECC_GameTraceChannel2 
@@ -13,6 +14,7 @@ ATile::ATile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	NavigationBoundsOffset = FVector(2000, 0, 0);
 }
 
 // Called when the game starts or when spawned
@@ -59,7 +61,8 @@ void ATile::PositionNavMeshBoundsVolume()
 	//test
 	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::PositionNavMeshBoundsVolume - checked out: %s"), *GetName(), *NavMeshBoundsRef->GetName());
 
-	NavMeshBoundsRef->SetActorLocation(GetActorLocation());
+	NavMeshBoundsRef->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
+	GetWorld()->GetNavigationSystem()->Build();
 }
 
 void ATile::SpawnActorsWithinTile(FVector MinPosition, FVector MaxPosition, TArray<TSubclassOf<AActor>> ToSpawn, int MinSpawn, int MaxSpawn)
