@@ -46,6 +46,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Gameplay")
 	bool IsDead() { return RemainingHealth <= 0.f; }
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay")
+	void Init();
+
 	virtual void UnPossessed() override;
 
 protected:

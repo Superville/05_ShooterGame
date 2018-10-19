@@ -36,6 +36,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	void SpawnActorsWithinTile(FVector MinPosition, FVector MaxPosition, TArray<TSubclassOf<class APropBase>> ToSpawn, int MinSpawn, int MaxSpawn);
 
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	void SpawnAIWithinTile(FVector MinPosition, FVector MaxPosition, TSubclassOf<class APawn> ToSpawn, int MinSpawn, int MaxSpawn);
+	
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetActorPool(class UActorPool* Pool);
 
@@ -53,6 +56,7 @@ private:
 	bool CanSpawnAt(FVector Location, float Radius);
 	bool FindEmptyLocation(FVector& out_EmptyLocation, float Radius, FVector MinPosition, FVector MaxPosition);
 	void PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnParams& SpawnParams);
+	void PlaceAI(TSubclassOf<class APawn> ToSpawn, FSpawnParams& SpawnParams);
 	void PositionNavMeshBoundsVolume();
 
 	UPROPERTY()

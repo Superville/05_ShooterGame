@@ -5,6 +5,8 @@
 #include "InfiniteTerrainGameMode.h"
 #include "PropBase.h"
 #include "AI/Navigation/NavigationSystem.h"
+#include "Runtime/Engine/Classes/GameFramework/Pawn.h"
+#include "AI/ThirdPersonCharacter.h"
 #include "DrawDebugHelpers.h"
 
 #define ECC_Spawn ECC_GameTraceChannel2 
@@ -93,14 +95,46 @@ void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnParams& SpawnParams)
 	FActorSpawnParameters ActorSpawnParams;
 	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	FTransform SpawnTranform;
-	SpawnTranform.SetLocation(SpawnParams.Location);
-	SpawnTranform.SetRotation(FRotator(0, SpawnParams.Rotation, 0).Quaternion());
-	SpawnTranform.SetScale3D(FVector(SpawnParams.Scale));
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(SpawnParams.Location);
+	SpawnTransform.SetRotation(FRotator(0, SpawnParams.Rotation, 0).Quaternion());
+	SpawnTransform.SetScale3D(FVector(SpawnParams.Scale));
 
-	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnTranform, ActorSpawnParams);
+	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnTransform, ActorSpawnParams);
 	SpawnedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 	SpawnedActor->SetActorScale3D(FVector(SpawnParams.Scale));
+}
+
+void ATile::SpawnAIWithinTile(FVector MinPosition, FVector MaxPosition, TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn)
+{
+	auto NumSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
+	FSpawnParams SpawnParams;
+	for (int i = 0; i < NumSpawn; i++)
+	{
+		if (FindEmptyLocation(SpawnParams.Location, 100.f, MinPosition, MaxPosition))
+		{
+			PlaceAI(ToSpawn, SpawnParams);
+		}
+	}
+}
+
+void ATile::PlaceAI(TSubclassOf<APawn> ToSpawn, FSpawnParams& SpawnParams)
+{
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(SpawnParams.Location);
+	SpawnTransform.SetRotation(FRotator(0, SpawnParams.Rotation, 0).Quaternion());
+
+	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(ToSpawn, SpawnTransform);
+	if (SpawnedPawn != nullptr)
+	{
+		SpawnedPawn->SpawnDefaultController();
+		SpawnedPawn->Tags.Add(FName("Guard"));
+		auto TPC = Cast<AThirdPersonCharacter>(SpawnedPawn);
+		if (TPC != nullptr)
+		{
+			TPC->Init();
+		}
+	}
 }
 
 #define MAX_ATTEMPTS 100
