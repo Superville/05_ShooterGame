@@ -32,12 +32,18 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 //	UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::EndPlay"), *GetName());
 
-	if (NavMeshBoundsRef != nullptr)
+	if (NavMeshBoundsVolumePool != nullptr && NavMeshBoundsRef != nullptr)
 	{
 //		UE_LOG(LogTemp, Warning, TEXT("[%s] ATile::EndPlay - Return Actor"), *GetName(), *NavMeshBoundsRef->GetName());
 
 		NavMeshBoundsVolumePool->ReturnActor(NavMeshBoundsRef);
 	}
+
+	for (int i = 0; i < PropsToCleanup.Num(); i++)
+	{
+		PropsToCleanup[i]->Destroy();
+	}
+	PropsToCleanup.Empty();
 }
 
 void ATile::SetActorPool(class UActorPool* Pool)
@@ -51,6 +57,12 @@ void ATile::SetActorPool(class UActorPool* Pool)
 
 void ATile::PositionNavMeshBoundsVolume()
 {
+	if (NavMeshBoundsVolumePool == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[%s] ATile::PositionNavMeshBoundsVolume - No pool!"), *GetName());
+		return;
+	}
+
 	NavMeshBoundsRef = NavMeshBoundsVolumePool->CheckoutActor();
 	if (NavMeshBoundsRef == nullptr)
 	{
@@ -101,8 +113,13 @@ void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnParams& SpawnParams)
 	SpawnTransform.SetScale3D(FVector(SpawnParams.Scale));
 
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnTransform, ActorSpawnParams);
-	SpawnedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-	SpawnedActor->SetActorScale3D(FVector(SpawnParams.Scale));
+	if (SpawnedActor != nullptr)
+	{
+		SpawnedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		SpawnedActor->SetActorScale3D(FVector(SpawnParams.Scale));
+
+		PropsToCleanup.Add(SpawnedActor);
+	}
 }
 
 void ATile::SpawnAIWithinTile(FVector MinPosition, FVector MaxPosition, TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn)
@@ -134,6 +151,7 @@ void ATile::PlaceAI(TSubclassOf<APawn> ToSpawn, FSpawnParams& SpawnParams)
 		{
 			TPC->Init();
 		}
+		PropsToCleanup.Add(SpawnedPawn);
 	}
 }
 

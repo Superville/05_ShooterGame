@@ -63,6 +63,11 @@ private:
 	class UActorPool* NavMeshBoundsVolumePool;
 
 	UPROPERTY()
-	AActor* NavMeshBoundsRef = nullptr;;
+	AActor* NavMeshBoundsRef = nullptr;
+
+	UPROPERTY()
+	TArray<AActor*> PropsToCleanup;
+
+
 
 };

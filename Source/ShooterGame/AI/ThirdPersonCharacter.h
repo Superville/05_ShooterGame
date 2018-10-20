@@ -41,6 +41,9 @@ public:
 	bool bTriggerDown;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float StartingHealth = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	float RemainingHealth = 100;
 
 	UFUNCTION(BlueprintPure, Category = "Gameplay")
