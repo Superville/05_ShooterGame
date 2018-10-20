@@ -44,6 +44,16 @@ void AThirdPersonCharacter::BeginPlay()
 	}
 }
 
+void AThirdPersonCharacter::Destroyed()
+{
+	Super::Destroyed();
+
+	if (Weapon != nullptr)
+	{
+		Weapon->Destroy();
+	}
+}
+
 
 void AThirdPersonCharacter::SpawnWeapon()
 {
